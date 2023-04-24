@@ -80,3 +80,31 @@ Route::get('/demandes/{id}', function (string $id) {
     $demande->user;
     return $demande;
 });
+
+
+Route::post('/fourniture/store', function (Request $request) {
+    $userId = $request->input('user_id');
+
+    // Informations de la fourniture
+    // Creation de la Fourniture
+    $fourniture = new Fourniture();
+    $fourniture->demandeur = $request->input('demandeur');
+    $fourniture->service = $request->input('service');
+    $fourniture->save();
+
+    $demandes = $request->input('demandes');
+
+    foreach ($demandes as $key => $value) {
+        $demande = new Demande();
+        $demande->des = $value['des'];
+        $demande->qtd = $value['qtd'];
+        $demande->qts = $value['qts'];
+        $demande->obs = $value['obs'];
+
+        $demande->user_id = $userId;
+        $demande->fourniture_id = $fourniture->id;
+
+        $demande->save();
+    }
+
+});
